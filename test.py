@@ -1,41 +1,28 @@
-import turtle
+from pynput import keyboard
 
-turtle.setup(400,500)
-wn = turtle.Screen()
-wn.title("Tess moves in space")
-wn.bgcolor("lightgreen")
-tess = turtle.Turtle()
+def on_press(key):
+    try:
+        print('alphanumeric key {0} pressed'.format(
+            key.char))
+    except AttributeError:
+        print('special key {0} pressed'.format(
+            key))
 
-def leftTurtle():
-    tess.left(90)
+def on_release(key):
+    print('{0} released'.format(
+        key))
+    if key == keyboard.Key.esc:
+        # Stop listener
+        return False
 
-def rightTurtle():
-    tess.right(90)
+# Collect events until released
+with keyboard.Listener(
+        on_press=on_press,
+        on_release=on_release) as listener:
+    listener.join()
 
-should_move = False
-
-def movementControl():
-    global should_move
-    should_move = not should_move
-
-def advance_state_machine():
-    global should_move
-    if should_move:       
-        tess.pendown()
-        tess.forward(2)
-    else:     
-        tess.penup()
-    wn.ontimer(advance_state_machine, 25)
-
-def exitWindow():
-    wn.bye()
-
-wn.onkey(movementControl, "space")
-wn.onkey(exitWindow, "q")
-wn.onkey(leftTurtle, "Left")
-wn.onkey(rightTurtle, "Right")
-
-wn.listen()                      
-advance_state_machine()
-
-wn.mainloop()
+# ...or, in a non-blocking fashion:
+#listener = keyboard.Listener(
+#   on_press=on_press,
+#   on_release=on_release)
+#listener.start()

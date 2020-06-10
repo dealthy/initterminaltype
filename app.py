@@ -1,39 +1,23 @@
+#author: dealthy
+#referenced: 
+#https://stackoverflow.com/questions/4810537/how-to-clear-the-screen-in-python#4810595
+#https://stackoverflow.com/questions/35731194/how-to-highlight-a-word-found-in-a-text-file#35731408
+#https://stackoverflow.com/questions/1557571/how-do-i-get-time-of-a-python-programs-execution#1557584
+#https://stackoverflow.com/questions/11918999/key-listeners-in-python#11919074
+#https://pynput.readthedocs.io/en/latest/keyboard.html#monitoring-the-keyboard
+
 import random
 import os
-
-english = ["the", "be", "of", "and", "a", "to", "in", "he", "have", 
-"it", "that", "for", "they", "I", "with", "as", "not", "on", "she", 
-"at", "by", "this", "we", "you", "do", "but", "from", "or", "which", 
-"one", "would", "all", "will", "there", "say", "who", "make", 
-"when", "can", "more", "if", "no", "man", "out", "other", "so", 
-"what", "time", "up", "go", "about", "than", "into", "could", 
-"state", "only", "new", "year", "some", "take", "come", "these", 
-"know", "see", "use", "get", "like", "then", "first", "any", "work", 
-"now", "may", "such", "give", "over", "think", "most", "even", 
-"find", "day", "also", "after", "way", "many", "must", "look", 
-"before", "great", "back", "through", "long", "where", "much", 
-"should", "well", "people", "down", "own", "just", "because", "good", 
-"each", "those", "feel", "seem", "how", "high", "too", "place", 
-"little", "world", "very", "still", "nation", "hand", "old", "life", 
-"tell", "write", "become", "here", "show", "house", "both", 
-"between", "need", "mean", "call", "develop", "under", "last", 
-"right", "move", "thing", "general", "school", "never", "same", 
-"another", "begin", "while", "number", "part", "turn", "real", 
-"leave", "might", "want", "point", "form", "off", "child", "few", 
-"small", "since", "against", "ask", "late", "home", "interest", 
-"large", "person", "end", "open", "public", "follow", "during", 
-"present", "without", "again", "hold", "govern", "around", 
-"possible", "head", "consider", "word", "program", "problem", 
-"however", "lead", "system", "set", "order", "eye", "plan", "run", 
-"keep", "face", "fact", "group", "play", "stand", "increase", 
-"early", "course", "change", "help", "line"]
-
-#from https://github.com/briano1905/typings/blob/master/texts/random.json
-#possibly change to "shuf" function under a txt file
+import time
+import sys
+import termios
+import contextlib
 
 CRUCIALVARIABLES = [1000, 50, 60]
-#the words generated for each test, the words target for each word test, the time limit of each time test
-#possibly also put into a seperate file
+#the words generated for each test
+#the words target for each word test
+#the time limit of each time test
+
 
 def wordRad():
 	#have the function that is dedicated to get words off from the txt file
@@ -45,28 +29,42 @@ def wordRad():
 			word = word + temp[i]
 		words.append(word)
 	return words
+#return time is too long
 
-#endinginfo[0] == wordtyped, endinginfo[1] == wordcompleted, endinginfo[2] == time used(s))
+#endinginfo[0] == wordtyped
+#endinginfo[1] == wordcompleted
+#endinginfo[2] == time used(s))
 
 def gui(words, testtype):
+	#put good theme to make the text prinout in the center
+	os.system("clear")
 	if(testtype % 2 == 0):
 		#place limits for time
 		print("time")
 	else:
 		current = 0
+		correct = 0
+		starttime = time.time()
 		for i in range(0, CRUCIALVARIABLES[1], 5):
-			#output
 			for j in range(5):
-				if(i * 5 + j == current):
-					print("\033[44;33m", words[i * 5 + j] ,"\033[m")
-				else:
-					print(words[i * 5 + j])
-			#input
-			for j in range(5):
-				#event listener
-				print("input")
-		inputword = input("input: ")
-	endinginfo = [100, 89, 63]
+				#output
+				for k in range(5):
+					wordindex = i + k
+					if(wordindex == current):
+						print("\033[44;33m", words[wordindex] ,"\033[m", end = " ")
+					else:
+						print(words[wordindex], end = " ")
+				print(" ")
+				#print(wordindex,  current, correct, i)
+				#switch to event listener
+				#using pynput
+				wordinput = input("input: ")
+				#need to fix: terminates each input by space instead of enter
+				if(wordinput == words[current]):
+					correct += 1
+				current += 1
+				os.system("clear")
+		endinginfo = [CRUCIALVARIABLES[1], correct, int(time.time() - starttime)]
 	return endinginfo
 
 def resultReturn(endinginfo):
