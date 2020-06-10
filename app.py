@@ -1,5 +1,5 @@
 import random
-
+import os
 
 english = ["the", "be", "of", "and", "a", "to", "in", "he", "have", 
 "it", "that", "for", "they", "I", "with", "as", "not", "on", "she", 
@@ -31,16 +31,19 @@ english = ["the", "be", "of", "and", "a", "to", "in", "he", "have",
 #from https://github.com/briano1905/typings/blob/master/texts/random.json
 #possibly change to "shuf" function under a txt file
 
-CRUCIALVARIABLES = [1000, 100, 60]
+CRUCIALVARIABLES = [1000, 50, 60]
 #the words generated for each test, the words target for each word test, the time limit of each time test
 #possibly also put into a seperate file
 
-def wordRad(bank):
+def wordRad():
 	#have the function that is dedicated to get words off from the txt file
 	words = []
-	for i in range(CRUCIALVARIABLES[1]):
-		rand = random.randint(0, len(bank) - 1)
-		words.append(bank[rand])
+	for i in range(CRUCIALVARIABLES[0]):
+		word = ""
+		temp = os.popen("shuf -n 1 words.txt").read()
+		for i in range(len(temp) - 1):
+			word = word + temp[i]
+		words.append(word)
 	return words
 
 #endinginfo[0] == wordtyped, endinginfo[1] == wordcompleted, endinginfo[2] == time used(s))
@@ -50,9 +53,19 @@ def gui(words, testtype):
 		#place limits for time
 		print("time")
 	else:
-		#place limit for words
-		print("words")
-	###################
+		current = 0
+		for i in range(0, CRUCIALVARIABLES[1], 5):
+			#output
+			for j in range(5):
+				if(i * 5 + j == current):
+					print("\033[44;33m", words[i * 5 + j] ,"\033[m")
+				else:
+					print(words[i * 5 + j])
+			#input
+			for j in range(5):
+				#event listener
+				print("input")
+		inputword = input("input: ")
 	endinginfo = [100, 89, 63]
 	return endinginfo
 
@@ -63,7 +76,7 @@ def resultReturn(endinginfo):
 	acc = int(endinginfo[1] / endinginfo[0] * 100)
 	if(acc / 100 <= 0):
 		acc = acc + " "
-	print(" ==============\n", "| wpm = ", wpm, " |\n", "| acc = ", acc, " |\n", "==============")
+	print(" ==============\n", "| wpm = ", wpm, " |\n", "| acc = ", acc, " |\n", "==============\n\n\n")
 	#print out results
 
 print("welcome to typing practice...")
@@ -72,14 +85,15 @@ print("60 seconds test is set to default")
 status = 1
 
 while True:
-	resultReturn(gui(wordRad(english), status))
+	resultReturn(gui(wordRad(), status))
 	choice = input("quit or continue: \nuse q to quit,\nuse s to switch modes,\nother keys to continue...\n")
 	if(choice == "q"):
 		print("thank you for using...")
+		os.system('clear')
 		break
 	if(choice == "s"):
 		status += 1
-		print("mode switched")
+		os.system('clear')
 	else:
 		continue
 
